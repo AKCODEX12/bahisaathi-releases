@@ -1,0 +1,79 @@
+name: bahisaathi
+description: "Digital Bahi Khata Management"
+
+publish_to: 'none'
+
+version: 1.0.0+21
+
+environment:
+  sdk: ^3.13.4
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+
+  cupertino_icons: ^1.0.8
+  firebase_core: ^4.15.0
+  firebase_auth: ^6.7.0
+  cloud_firestore: ^6.10.0
+  shared_preferences: ^2.5.5
+  local_auth: ^3.0.2
+  share_plus: ^13.3.0
+  firebase_storage: ^13.6.1
+  image_picker: ^1.2.3
+
+  pdf: ^3.11.3
+  printing: ^5.13.4
+  image: ^4.5.4
+  cross_file: ^0.3.4+2
+  flutter_secure_storage: ^11.2.0
+  cryptography: ^2.9.0
+  package_info_plus: 10.2.2
+  open_filex: ^5.0.0
+  path_provider: ^2.1.6
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+  flutter_lints: ^6.0.0
+  flutter_native_splash: ^2.4.8
+  flutter_launcher_icons: ^0.14.3
+
+flutter:
+  uses-material-design: true
+
+  assets:
+    - assets/fonts/
+    - assets/images/bahisaathi_logo.png
+    - assets/images/bahisaathi_logo_cropped.png
+    - assets/images/bahisaathi_android12_splash (2).png
+
+  fonts:
+    - family: NotoSans
+      fonts:
+        - asset: assets/fonts/NotoSans-Regular.ttf
+          weight: 400
+        - asset: assets/fonts/NotoSans-Bold.ttf
+          weight: 700
+
+flutter_native_splash:
+  color: "#FFFFFF"
+  image: assets/images/bahisaathi_android12_splash (2).png
+
+  android: true
+  ios: true
+  web: false
+
+  android_12:
+    color: "#FFFFFF"
+    image: assets/images/bahisaathi_android12_splash (2).png
+    icon_background_color: "#FFFFFF"
+
+flutter_launcher_icons:
+  android: true
+  ios: true
+  image_path: "assets/images/bahisaathi_logo_cropped.png"
+  adaptive_icon_background: "#0B5318"
+  adaptive_icon_foreground: "assets/images/bahisaathi_logo_cropped.png"
+  remove_alpha_ios: true

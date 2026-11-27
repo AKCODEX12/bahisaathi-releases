@@ -1,0 +1,3 @@
+-keep class com.crazecoder.openfile.** { *; }
+-keep class com.baseflow.permissionhandler.** { *; }
+-dontwarn com.crazecoder.openfile.**
