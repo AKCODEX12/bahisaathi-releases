@@ -10,68 +10,45 @@ class AppUpdateService {
 static bool _checkedThisSession = false;
 
 static Future<void> checkForUpdate(BuildContext context) async {
-if (_checkedThisSession) return;
-_checkedThisSession = true;
+  if (_checkedThisSession) return;
+  _checkedThisSession = true;
 
-try {
-final packageInfo = await PackageInfo.fromPlatform();
-final int currentBuildNumber = int.tryParse(packageInfo.buildNumber) ?? 1;
+  try {
+    final packageInfo = await PackageInfo.fromPlatform();
+    final int rawBuildNumber = int.tryParse(packageInfo.buildNumber) ?? 1;
+    // ✅ --split-per-abi ki wajah se 2025 ko 25 banayega
+    final int currentBuildNumber = rawBuildNumber % 1000;
 
-final doc = await FirebaseFirestore.instance
-.collection('app_config')
-.doc('android_update')
-.get(const GetOptions(source: Source.server));
+    final doc = await FirebaseFirestore.instance
+        .collection('app_config')
+        .doc('android_update')
+        .get(const GetOptions(source: Source.server));
 
-if (!doc.exists || doc.data() == null) {
-if (context.mounted) {
-ScaffoldMessenger.of(context).showSnackBar(
-const SnackBar(content: Text('DEBUG: android_update doc nahi mila')),
-);
-}
-return;
+    if (!doc.exists || doc.data() == null) return;
+
+    final data = doc.data()!;
+    final int latestBuild = ((data['latest_build'] ?? 1) as num).toInt();
+    final String apkUrl = (data['apk_url'] ?? '').toString().trim();
+    final bool forceUpdate = (data['force_update'] ?? false) as bool;
+    final String message = (data['message'] ??
+        'BahiSaathi का नया वर्ज़न उपलब्ध है। ऐप के अंदर ही तुरंत अपडेट करें।')
+        .toString();
+
+    if (latestBuild > currentBuildNumber && apkUrl.isNotEmpty) {
+      if (!context.mounted) return;
+      _showInAppUpdateDialog(
+        context: context,
+        apkUrl: apkUrl,
+        latestBuild: latestBuild,
+        message: message,
+        forceUpdate: forceUpdate,
+      );
+    }
+  } catch (e) {
+    debugPrint('AUTO UPDATE CHECK ERROR: $e');
+  }
 }
 
-final data = doc.data()!;
-final int latestBuild = ((data['latest_build'] ?? 1) as num).toInt();
-final String apkUrl = (data['apk_url'] ?? '').toString().trim();
-final bool forceUpdate = (data['force_update'] ?? false) as bool;
-final String message = (data['message'] ??
-'BahiSaathi का नया वर्ज़न उपलब्ध है। ऐप के अंदर ही तुरंत अपडेट करें।')
-.toString();
-
-if (latestBuild > currentBuildNumber && apkUrl.isNotEmpty) {
-if (!context.mounted) return;
-_showInAppUpdateDialog(
-context: context,
-apkUrl: apkUrl,
-latestBuild: latestBuild,
-message: message,
-forceUpdate: forceUpdate,
-);
-} else {
-if (context.mounted) {
-ScaffoldMessenger.of(context).showSnackBar(
-SnackBar(
-content: Text(
-'DEBUG: Phone Build=$currentBuildNumber | Server Build=$latestBuild',
-),
-duration: const Duration(seconds: 5),
-),
-);
-}
-}
-} catch (e) {
-if (context.mounted) {
-ScaffoldMessenger.of(context).showSnackBar(
-SnackBar(
-content: Text('DEBUG ERROR: $e'),
-backgroundColor: Colors.red,
-duration: const Duration(seconds: 6),
-),
-);
-}
-}
-}
 static void _showInAppUpdateDialog({
   required BuildContext context,
   required String apkUrl,

@@ -3,7 +3,7 @@ description: "Digital Bahi Khata Management"
 
 publish_to: 'none'
 
-version: 1.0.0+25
+version: 1.0.0+26
 
 environment:
   sdk: ^3.13.4
